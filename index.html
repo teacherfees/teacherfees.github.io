@@ -5,195 +5,200 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Teacher Attendance Ledger</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla:ital@0;1&family=Hind+Siliguri:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Cormorant+SC:wght@600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --paper: #efe8d6;
-    --paper-dark: #e4dbc4;
-    --line-blue: #2e4c6d;
-    --ledger-red: #a83c3c;
-    --ink: #221e19;
-    --ink-soft: #4a4436;
-    --stamp-green: #3f6c51;
-    --gold: #b8863b;
-    --shadow: rgba(42,38,34,0.18);
+    --navy: #1c2536;
+    --navy-soft: #2a3550;
+    --paper: #f7f2e6;
+    --paper-line: #e2d8bf;
+    --ink: #2a2419;
+    --ink-soft: #6b6047;
+    --gold: #a9843f;
+    --gold-light: #c9a35f;
+    --wine: #7d2f2c;
+    --pine: #33553a;
+    --shadow: rgba(15,18,28,0.35);
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
     background:
-      repeating-linear-gradient(var(--paper) 0px, var(--paper) 27px, rgba(46,76,109,0.10) 28px),
-      var(--paper);
+      radial-gradient(ellipse at top, var(--navy-soft) 0%, var(--navy) 62%);
     color:var(--ink);
-    font-family:'Hind Siliguri', sans-serif;
+    font-family:'EB Garamond', serif;
     min-height:100vh;
-    padding:28px 16px 60px;
+    padding:36px 14px 60px;
+    line-height:1.55;
   }
-  .margin-rule{
-    position:fixed;
-    top:0; bottom:0; left:64px;
-    width:1px;
-    background:rgba(168,60,60,0.35);
-    z-index:0;
-  }
-  @media (max-width:600px){ .margin-rule{display:none;} }
 
   .wrap{
-    max-width:760px;
+    max-width:640px;
     margin:0 auto;
     position:relative;
-    z-index:1;
+  }
+
+  .page{
+    background:var(--paper);
+    border:1px solid var(--gold);
+    outline:1px solid rgba(169,132,63,0.4);
+    outline-offset:6px;
+    border-radius:2px;
+    padding:34px 26px 30px;
+    box-shadow:0 18px 50px var(--shadow);
+  }
+  @media (min-width:520px){
+    .page{ padding:42px 40px 36px; }
   }
 
   header.title-block{
     text-align:center;
-    margin-bottom:22px;
+    margin-bottom:26px;
+    padding-bottom:22px;
+    border-bottom:1px solid var(--paper-line);
   }
   .eyebrow{
-    font-family:'JetBrains Mono', monospace;
-    font-size:11px;
-    letter-spacing:0.22em;
-    color:var(--ledger-red);
+    font-family:'Cormorant SC', serif;
+    font-size:13px;
+    letter-spacing:0.32em;
+    color:var(--gold);
     text-transform:uppercase;
-    font-weight:700;
+    font-weight:600;
   }
   h1{
-    font-family:'Tiro Bangla', serif;
+    font-family:'Playfair Display', serif;
     font-weight:700;
-    font-size:34px;
-    margin:6px 0 4px;
-    color:var(--line-blue);
+    font-style:italic;
+    font-size:33px;
+    line-height:1.3;
+    margin:10px 0 8px;
+    color:var(--navy);
   }
   .subtitle{
-    font-size:14px;
-    font-weight:600;
+    font-size:16px;
+    font-style:italic;
+    line-height:1.5;
     color:var(--ink-soft);
   }
 
   .tabs{
     display:flex;
-    gap:10px;
+    gap:0;
     justify-content:center;
-    margin:22px 0 18px;
-    flex-wrap:wrap;
+    margin:0 0 26px;
+    border-bottom:1px solid var(--paper-line);
   }
   .tab-btn{
-    font-family:'Hind Siliguri', sans-serif;
-    font-weight:700;
-    font-size:15px;
-    padding:10px 22px;
+    font-family:'Cormorant SC', serif;
+    font-weight:600;
+    font-size:16px;
+    letter-spacing:0.06em;
+    padding:10px 24px 12px;
     background:transparent;
-    border:1.5px solid var(--line-blue);
-    color:var(--line-blue);
-    border-radius:2px;
+    border:none;
+    border-bottom:2px solid transparent;
+    color:var(--ink-soft);
     cursor:pointer;
-    transition:all .18s ease;
-    position:relative;
+    transition:color .18s ease, border-color .18s ease;
+    margin-bottom:-1px;
   }
   .tab-btn.active{
-    background:var(--line-blue);
-    color:var(--paper);
+    color:var(--wine);
+    border-bottom-color:var(--gold);
   }
-  .tab-btn:focus-visible{ outline:2px solid var(--ledger-red); outline-offset:2px; }
-
-  .card{
-    background:rgba(255,253,246,0.55);
-    border:1px solid rgba(46,76,109,0.35);
-    border-radius:3px;
-    padding:22px 20px 26px;
-    box-shadow:0 2px 10px var(--shadow);
-  }
+  .tab-btn:hover:not(.active){ color:var(--navy); }
+  .tab-btn:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
 
   /* Punch card */
   .punch-row-label{
-    font-family:'JetBrains Mono', monospace;
-    font-size:11px;
-    letter-spacing:0.12em;
+    font-family:'Cormorant SC', serif;
+    font-size:13px;
+    letter-spacing:0.14em;
     color:var(--ink-soft);
     text-transform:uppercase;
-    font-weight:700;
-    margin-bottom:8px;
+    font-weight:600;
+    margin-bottom:12px;
   }
   .punchcard{
     display:flex;
-    gap:7px;
+    gap:8px;
     flex-wrap:wrap;
-    margin-bottom:14px;
+    margin-bottom:18px;
   }
   .punch{
-    width:26px; height:26px;
+    width:29px; height:29px;
     border-radius:50%;
-    border:1.5px dashed rgba(46,76,109,0.6);
+    border:1.3px solid var(--paper-line);
     display:flex;align-items:center;justify-content:center;
-    font-family:'JetBrains Mono', monospace;
-    font-weight:700;
-    font-size:11px;
+    font-family:'EB Garamond', serif;
+    font-weight:600;
+    font-size:13px;
     color:var(--ink-soft);
     flex-shrink:0;
+    background:#fffdf7;
   }
   .punch.filled{
-    background:var(--stamp-green);
-    border-style:solid;
-    border-color:var(--stamp-green);
+    background:var(--pine);
+    border-color:var(--pine);
     color:#fff;
-    font-weight:700;
-    transform:rotate(-4deg);
+    font-weight:600;
   }
 
   .stat-line{
-    font-size:15px;
-    font-weight:600;
+    font-size:16px;
+    line-height:1.6;
     color:var(--ink);
-    margin-bottom:2px;
+    margin-bottom:5px;
   }
-  .stat-line b{ color:var(--line-blue); font-weight:800; }
-  .stat-line.done{ color:var(--stamp-green); font-weight:700; }
+  .stat-line b{ color:var(--wine); font-weight:600; }
+  .stat-line.done{ color:var(--pine); font-style:italic; }
 
   .divider{
     border:none;
-    border-top:1px dashed rgba(46,76,109,0.35);
-    margin:18px 0;
+    border-top:1px solid var(--paper-line);
+    margin:22px 0;
   }
 
   .cal-header{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    margin-bottom:10px;
+    margin-bottom:16px;
   }
   .cal-header button{
-    background:none;
-    border:1px solid var(--line-blue);
-    color:var(--line-blue);
+    background:#fffdf7;
+    border:1px solid var(--gold);
+    color:var(--gold);
     width:30px;height:30px;
     border-radius:50%;
     cursor:pointer;
     font-size:16px;
-    font-weight:700;
     line-height:1;
   }
+  .cal-header button:hover{ background:var(--gold); color:#fff; }
   .cal-month-label{
-    font-family:'Tiro Bangla', serif;
-    font-weight:700;
-    font-size:19px;
-    color:var(--line-blue);
+    font-family:'Playfair Display', serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:20px;
+    color:var(--navy);
   }
 
   .dow-row, .day-grid{
     display:grid;
     grid-template-columns:repeat(7, 1fr);
-    gap:6px;
+    gap:5px;
   }
   .dow-row{
-    margin-bottom:6px;
+    margin-bottom:8px;
   }
   .dow{
     text-align:center;
-    font-family:'JetBrains Mono', monospace;
-    font-size:11px;
-    font-weight:700;
-    color:var(--ledger-red);
-    letter-spacing:0.05em;
+    font-family:'Cormorant SC', serif;
+    font-size:12px;
+    font-weight:600;
+    color:var(--gold);
+    letter-spacing:0.04em;
   }
   .day-cell{
     aspect-ratio:1/1;
@@ -201,73 +206,180 @@
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    border:1px solid rgba(46,76,109,0.25);
+    border:1px solid var(--paper-line);
     border-radius:2px;
     cursor:pointer;
-    font-family:'JetBrains Mono', monospace;
+    font-family:'EB Garamond', serif;
     font-weight:600;
-    font-size:14px;
+    font-size:15px;
     color:var(--ink);
-    background:rgba(255,253,246,0.4);
+    background:#fffdf7;
     transition:background .15s ease, transform .1s ease;
     position:relative;
     user-select:none;
   }
-  .day-cell:hover{ background:rgba(46,76,109,0.12); }
+  .day-cell:hover{ background:var(--paper); }
   .day-cell:active{ transform:scale(0.94); }
   .day-cell.empty{ visibility:hidden; cursor:default; }
   .day-cell.present{
-    background:var(--stamp-green);
+    background:var(--pine);
     color:#fff;
-    border-color:var(--stamp-green);
+    border-color:var(--pine);
     font-weight:700;
   }
   .day-cell.today:not(.present){
-    border:1.5px solid var(--ledger-red);
+    border:1.5px solid var(--wine);
   }
   .day-cell .tick{
     font-size:11px;
     font-weight:700;
     margin-top:1px;
   }
-  .day-cell:focus-visible{ outline:2px solid var(--ledger-red); outline-offset:2px; }
+  .day-cell:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+
+  .pay-box{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    background:rgba(169,132,63,0.12);
+    border:1px solid var(--gold);
+    border-radius:2px;
+    padding:14px 16px;
+    margin:16px 0;
+  }
+  .pay-box-text{
+    font-size:15px;
+    font-style:italic;
+    color:var(--navy);
+  }
+  .pay-btn{
+    font-family:'Cormorant SC', serif;
+    font-weight:600;
+    letter-spacing:0.04em;
+    font-size:14px;
+    padding:9px 20px;
+    background:var(--pine);
+    color:#fff;
+    border:none;
+    border-radius:2px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .pay-btn:hover{ background:#284530; }
+  .pay-btn:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+
+  .pay-history{
+    margin-top:10px;
+    padding-top:12px;
+    border-top:1px solid var(--paper-line);
+  }
+  .pay-log-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    font-size:15px;
+    font-style:italic;
+    color:var(--ink-soft);
+    padding:4px 0;
+  }
+  .undo-btn{
+    font-family:'Cormorant SC', serif;
+    font-weight:600;
+    font-size:12px;
+    letter-spacing:0.04em;
+    padding:4px 12px;
+    background:transparent;
+    color:var(--wine);
+    border:1px solid var(--wine);
+    border-radius:2px;
+    cursor:pointer;
+    flex-shrink:0;
+    font-style:normal;
+  }
+  .undo-btn:hover{ background:var(--wine); color:#fff; }
+  .undo-btn:focus-visible{ outline:2px solid var(--navy); outline-offset:2px; }
 
   footer{
     text-align:center;
-    margin-top:22px;
-    font-family:'JetBrains Mono', monospace;
-    font-size:11px;
-    color:var(--ink-soft);
-    letter-spacing:0.05em;
+    margin-top:24px;
+    font-family:'Cormorant SC', serif;
+    font-size:12px;
+    letter-spacing:0.08em;
+    color:var(--paper-line);
   }
 
   .loading{
     text-align:center;
     padding:40px 0;
     color:var(--ink-soft);
-    font-family:'JetBrains Mono', monospace;
-    font-size:13px;
+    font-style:italic;
+    font-size:15px;
+  }
+
+  #syncStatus{
+    display:inline-block;
+    margin-top:4px;
+    font-size:11px;
+    letter-spacing:0.06em;
+  }
+  #syncStatus.ok{ color:var(--pine); }
+  #syncStatus.err{ color:var(--wine); }
+  #syncStatus.busy{ color:var(--gold-light); }
+
+  /* Salary-due alert theme: kicks in once 12 classes are complete and unpaid */
+  body.salary-due{
+    background:
+      radial-gradient(ellipse at top, #7a1414 0%, #3d0a0a 62%);
+  }
+  body.salary-due .page{
+    border-color:#c0392b;
+    outline-color:rgba(192,57,43,0.45);
+    box-shadow:0 18px 50px rgba(90,10,10,0.55);
+  }
+  body.salary-due .eyebrow{ color:#c0392b; }
+  body.salary-due h1{ color:#7a1414; }
+  body.salary-due .tab-btn.active{ color:#c0392b; border-bottom-color:#c0392b; }
+  body.salary-due .pay-box{
+    background:rgba(192,57,43,0.14);
+    border-color:#c0392b;
+    animation:pulse-red 1.6s ease-in-out infinite;
+  }
+  body.salary-due .pay-box-text{ color:#7a1414; font-weight:600; }
+  body.salary-due .pay-btn{ background:#c0392b; }
+  body.salary-due .pay-btn:hover{ background:#96281b; }
+  body.salary-due .stat-line.done{ color:#c0392b; }
+  @keyframes pulse-red{
+    0%,100%{ box-shadow:0 0 0 0 rgba(192,57,43,0.35); }
+    50%{ box-shadow:0 0 0 8px rgba(192,57,43,0); }
   }
 </style>
 </head>
 <body>
-<div class="margin-rule"></div>
 <div class="wrap">
-  <header class="title-block">
-    <div class="eyebrow">Attendance &amp; Salary Ledger</div>
-    <h1>Teacher Attendance Ledger</h1>
-    <div class="subtitle">12 classes completed = 1 month's salary complete</div>
-  </header>
+  <div class="page">
+    <header class="title-block">
+      <div class="eyebrow">Attendance &amp; Salary Ledger</div>
+      <h1>Teacher Attendance Ledger</h1>
+      <div class="subtitle">12 classes completed = 1 month's salary complete</div>
+    </header>
 
-  <div class="tabs" id="tabs"></div>
-  <div class="card" id="content">
-    <div class="loading">Loading ledger…</div>
+    <div class="tabs" id="tabs"></div>
+    <div class="card" id="content">
+      <div class="loading">Loading ledger…</div>
+    </div>
   </div>
 
-  <footer>Click a date to mark attendance — data is saved on this device</footer>
+  <footer>Click a date to mark attendance — data is saved on this device<br><span id="syncStatus"></span></footer>
 </div>
 
 <script>
+// Paste your Google Apps Script "Web app URL" here (see Code.gs setup instructions).
+// Leave it as '' to use this device's local storage only (no cloud sync).
+const SHEET_API_URL = '';
+
 const TEACHERS = [
   { id: 'irfan', name: 'Irfan Bhai' },
   { id: 'shafayet', name: 'Shafayet Bhai' }
@@ -299,22 +411,77 @@ function renderTabs(){
   });
 }
 
-async function loadTeacher(id){
-  if (store[id]) return store[id];
+function setSyncStatus(text, kind){
+  const el = document.getElementById('syncStatus');
+  if(!el) return;
+  el.textContent = text;
+  el.className = kind || '';
+}
+
+function readLocal(id){
   try{
     const raw = localStorage.getItem(`attendance_${id}`);
-    store[id] = raw ? JSON.parse(raw) : { dates: {} };
+    return raw ? JSON.parse(raw) : { dates: {}, paidCount: 0, paymentLog: [] };
   }catch(e){
-    store[id] = { dates: {} };
+    return { dates: {}, paidCount: 0, paymentLog: [] };
   }
+}
+
+function writeLocal(id, data){
+  try{
+    localStorage.setItem(`attendance_${id}`, JSON.stringify(data));
+  }catch(e){
+    console.error('Local storage unavailable:', e);
+  }
+}
+
+async function loadTeacher(id){
+  // Always start from whatever is on this device so the UI never blocks on the network.
+  let data = readLocal(id);
+  if (data.paidCount === undefined) data.paidCount = 0;
+  if (!data.paymentLog) data.paymentLog = [];
+  store[id] = data;
+
+  if (SHEET_API_URL) {
+    setSyncStatus('Syncing…', 'busy');
+    try{
+      const res = await fetch(`${SHEET_API_URL}?teacherId=${encodeURIComponent(id)}`);
+      const remote = await res.json();
+      if (remote && !remote.error) {
+        if (remote.paidCount === undefined) remote.paidCount = 0;
+        if (!remote.paymentLog) remote.paymentLog = [];
+        store[id] = remote;
+        writeLocal(id, remote); // keep local copy fresh as an offline fallback
+        setSyncStatus('Synced with Google Sheet ✓', 'ok');
+      } else {
+        setSyncStatus('Sheet sync error — using local data', 'err');
+      }
+    }catch(e){
+      console.error('Sheet load failed:', e);
+      setSyncStatus('Offline — using data saved on this device', 'err');
+    }
+  }
+
   return store[id];
 }
 
 async function saveTeacher(id){
-  try{
-    localStorage.setItem(`attendance_${id}`, JSON.stringify(store[id]));
-  }catch(e){
-    console.error('Local storage unavailable:', e);
+  // Save locally first and immediately — this must never be blocked by the network.
+  writeLocal(id, store[id]);
+
+  if (SHEET_API_URL) {
+    setSyncStatus('Saving to Google Sheet…', 'busy');
+    try{
+      await fetch(SHEET_API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // avoids CORS preflight on Apps Script
+        body: JSON.stringify({ teacherId: id, data: store[id] })
+      });
+      setSyncStatus('Synced with Google Sheet ✓', 'ok');
+    }catch(e){
+      console.error('Sheet save failed:', e);
+      setSyncStatus('Saved on this device — will retry sync next time online', 'err');
+    }
   }
 }
 
@@ -340,6 +507,10 @@ async function renderContent(){
   const { html: punchHtml } = buildPunchcard(total);
   const completedCycles = Math.floor(total / CLASSES_PER_MONTH);
   const remaining = total % CLASSES_PER_MONTH === 0 ? (total > 0 ? 0 : CLASSES_PER_MONTH) : CLASSES_PER_MONTH - (total % CLASSES_PER_MONTH);
+  const paidCount = data.paidCount || 0;
+  const unpaidReady = completedCycles - paidCount;
+
+  document.body.classList.toggle('salary-due', unpaidReady > 0);
 
   const y = viewMonth.getFullYear();
   const m = viewMonth.getMonth();
@@ -363,12 +534,31 @@ async function renderContent(){
     </button>`;
   }
 
+  const paymentLogHtml = data.paymentLog.length
+    ? `<div class="pay-history">
+        <div class="punch-row-label">Payment history</div>
+        ${data.paymentLog.slice().reverse().map((p, idx) => `
+          <div class="pay-log-row">
+            <span>Month ${p.cycle} — paid on ${p.date}</span>
+            ${idx === 0 ? '<button type="button" id="undoPaidBtn" class="undo-btn">Undo</button>' : ''}
+          </div>
+        `).join('')}
+      </div>`
+    : '';
+
   contentEl.innerHTML = `
     <div class="punch-row-label">Current salary cycle (12 classes = 1 month)</div>
     ${punchHtml}
     <div class="stat-line"><b>${total}</b> total classes completed</div>
     ${completedCycles > 0 ? `<div class="stat-line done">✓ ${completedCycles} month${completedCycles > 1 ? 's' : ''} of salary complete</div>` : ''}
     <div class="stat-line"><b>${remaining}</b> more class${remaining === 1 ? '' : 'es'} until next month's salary is complete</div>
+    ${unpaidReady > 0 ? `
+      <div class="pay-box">
+        <div class="pay-box-text">Month ${paidCount + 1} salary is ready to be paid</div>
+        <button type="button" id="markPaidBtn" class="pay-btn">Mark salary as paid</button>
+      </div>
+    ` : ''}
+    ${paymentLogHtml}
     <hr class="divider">
     <div class="cal-header">
       <button type="button" id="prevMonth" aria-label="Previous month">‹</button>
@@ -387,6 +577,32 @@ async function renderContent(){
     viewMonth.setMonth(viewMonth.getMonth() + 1);
     renderContent();
   };
+
+  const payBtn = document.getElementById('markPaidBtn');
+  if (payBtn) {
+    payBtn.addEventListener('click', async () => {
+      const d = store[activeTeacher];
+      const nextCycle = (d.paidCount || 0) + 1;
+      const todayStr = new Date().toISOString().slice(0, 10);
+      d.paidCount = nextCycle;
+      d.paymentLog.push({ cycle: nextCycle, date: todayStr });
+      await saveTeacher(activeTeacher);
+      renderContent();
+    });
+  }
+
+  const undoBtn = document.getElementById('undoPaidBtn');
+  if (undoBtn) {
+    undoBtn.addEventListener('click', async () => {
+      const d = store[activeTeacher];
+      if (d.paymentLog.length > 0) {
+        d.paymentLog.pop();
+        d.paidCount = Math.max(0, (d.paidCount || 0) - 1);
+        await saveTeacher(activeTeacher);
+        renderContent();
+      }
+    });
+  }
 
   contentEl.querySelectorAll('.day-cell[data-key]').forEach(cell => {
     cell.addEventListener('click', async () => {
