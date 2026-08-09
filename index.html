@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Attendance Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla:ital@0;1&family=Hind+Siliguri:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #efe8d6;
+    --paper-dark: #e4dbc4;
+    --line-blue: #2e4c6d;
+    --ledger-red: #a83c3c;
+    --ink: #221e19;
+    --ink-soft: #4a4436;
+    --stamp-green: #3f6c51;
+    --gold: #b8863b;
+    --shadow: rgba(42,38,34,0.18);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      repeating-linear-gradient(var(--paper) 0px, var(--paper) 27px, rgba(46,76,109,0.10) 28px),
+      var(--paper);
+    color:var(--ink);
+    font-family:'Hind Siliguri', sans-serif;
+    min-height:100vh;
+    padding:28px 16px 60px;
+  }
+  .margin-rule{
+    position:fixed;
+    top:0; bottom:0; left:64px;
+    width:1px;
+    background:rgba(168,60,60,0.35);
+    z-index:0;
+  }
+  @media (max-width:600px){ .margin-rule{display:none;} }
+
+  .wrap{
+    max-width:760px;
+    margin:0 auto;
+    position:relative;
+    z-index:1;
+  }
+
+  header.title-block{
+    text-align:center;
+    margin-bottom:22px;
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.22em;
+    color:var(--ledger-red);
+    text-transform:uppercase;
+    font-weight:700;
+  }
+  h1{
+    font-family:'Tiro Bangla', serif;
+    font-weight:700;
+    font-size:34px;
+    margin:6px 0 4px;
+    color:var(--line-blue);
+  }
+  .subtitle{
+    font-size:14px;
+    font-weight:600;
+    color:var(--ink-soft);
+  }
+
+  .tabs{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    margin:22px 0 18px;
+    flex-wrap:wrap;
+  }
+  .tab-btn{
+    font-family:'Hind Siliguri', sans-serif;
+    font-weight:700;
+    font-size:15px;
+    padding:10px 22px;
+    background:transparent;
+    border:1.5px solid var(--line-blue);
+    color:var(--line-blue);
+    border-radius:2px;
+    cursor:pointer;
+    transition:all .18s ease;
+    position:relative;
+  }
+  .tab-btn.active{
+    background:var(--line-blue);
+    color:var(--paper);
+  }
+  .tab-btn:focus-visible{ outline:2px solid var(--ledger-red); outline-offset:2px; }
+
+  .card{
+    background:rgba(255,253,246,0.55);
+    border:1px solid rgba(46,76,109,0.35);
+    border-radius:3px;
+    padding:22px 20px 26px;
+    box-shadow:0 2px 10px var(--shadow);
+  }
+
+  /* Punch card */
+  .punch-row-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.12em;
+    color:var(--ink-soft);
+    text-transform:uppercase;
+    font-weight:700;
+    margin-bottom:8px;
+  }
+  .punchcard{
+    display:flex;
+    gap:7px;
+    flex-wrap:wrap;
+    margin-bottom:14px;
+  }
+  .punch{
+    width:26px; height:26px;
+    border-radius:50%;
+    border:1.5px dashed rgba(46,76,109,0.6);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'JetBrains Mono', monospace;
+    font-weight:700;
+    font-size:11px;
+    color:var(--ink-soft);
+    flex-shrink:0;
+  }
+  .punch.filled{
+    background:var(--stamp-green);
+    border-style:solid;
+    border-color:var(--stamp-green);
+    color:#fff;
+    font-weight:700;
+    transform:rotate(-4deg);
+  }
+
+  .stat-line{
+    font-size:15px;
+    font-weight:600;
+    color:var(--ink);
+    margin-bottom:2px;
+  }
+  .stat-line b{ color:var(--line-blue); font-weight:800; }
+  .stat-line.done{ color:var(--stamp-green); font-weight:700; }
+
+  .divider{
+    border:none;
+    border-top:1px dashed rgba(46,76,109,0.35);
+    margin:18px 0;
+  }
+
+  .cal-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:10px;
+  }
+  .cal-header button{
+    background:none;
+    border:1px solid var(--line-blue);
+    color:var(--line-blue);
+    width:30px;height:30px;
+    border-radius:50%;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:700;
+    line-height:1;
+  }
+  .cal-month-label{
+    font-family:'Tiro Bangla', serif;
+    font-weight:700;
+    font-size:19px;
+    color:var(--line-blue);
+  }
+
+  .dow-row, .day-grid{
+    display:grid;
+    grid-template-columns:repeat(7, 1fr);
+    gap:6px;
+  }
+  .dow-row{
+    margin-bottom:6px;
+  }
+  .dow{
+    text-align:center;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    font-weight:700;
+    color:var(--ledger-red);
+    letter-spacing:0.05em;
+  }
+  .day-cell{
+    aspect-ratio:1/1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    border:1px solid rgba(46,76,109,0.25);
+    border-radius:2px;
+    cursor:pointer;
+    font-family:'JetBrains Mono', monospace;
+    font-weight:600;
+    font-size:14px;
+    color:var(--ink);
+    background:rgba(255,253,246,0.4);
+    transition:background .15s ease, transform .1s ease;
+    position:relative;
+    user-select:none;
+  }
+  .day-cell:hover{ background:rgba(46,76,109,0.12); }
+  .day-cell:active{ transform:scale(0.94); }
+  .day-cell.empty{ visibility:hidden; cursor:default; }
+  .day-cell.present{
+    background:var(--stamp-green);
+    color:#fff;
+    border-color:var(--stamp-green);
+    font-weight:700;
+  }
+  .day-cell.today:not(.present){
+    border:1.5px solid var(--ledger-red);
+  }
+  .day-cell .tick{
+    font-size:11px;
+    font-weight:700;
+    margin-top:1px;
+  }
+  .day-cell:focus-visible{ outline:2px solid var(--ledger-red); outline-offset:2px; }
+
+  footer{
+    text-align:center;
+    margin-top:22px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    letter-spacing:0.05em;
+  }
+
+  .loading{
+    text-align:center;
+    padding:40px 0;
+    color:var(--ink-soft);
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+  }
+</style>
+</head>
+<body>
+<div class="margin-rule"></div>
+<div class="wrap">
+  <header class="title-block">
+    <div class="eyebrow">Attendance &amp; Salary Ledger</div>
+    <h1>Teacher Attendance Ledger</h1>
+    <div class="subtitle">12 classes completed = 1 month's salary complete</div>
+  </header>
+
+  <div class="tabs" id="tabs"></div>
+  <div class="card" id="content">
+    <div class="loading">Loading ledger…</div>
+  </div>
+
+  <footer>Click a date to mark attendance — data is saved on this device</footer>
+</div>
+
+<script>
+const TEACHERS = [
+  { id: 'irfan', name: 'Irfan Bhai' },
+  { id: 'shafayet', name: 'Shafayet Bhai' }
+];
+const CLASSES_PER_MONTH = 12;
+const DOW_LABELS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function pad(n){ return n < 10 ? '0'+n : ''+n; }
+function dateKey(y,m,d){ return `${y}-${pad(m+1)}-${pad(d)}`; }
+
+let activeTeacher = TEACHERS[0].id;
+let store = {}; // { teacherId: { dates: {'2026-08-01': true, ...} } }
+let viewMonth = new Date();
+viewMonth.setDate(1);
+
+const contentEl = document.getElementById('content');
+const tabsEl = document.getElementById('tabs');
+
+function renderTabs(){
+  tabsEl.innerHTML = '';
+  TEACHERS.forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn' + (t.id === activeTeacher ? ' active' : '');
+    btn.textContent = t.name;
+    btn.setAttribute('aria-pressed', t.id === activeTeacher);
+    btn.onclick = () => { activeTeacher = t.id; viewMonth = new Date(); viewMonth.setDate(1); renderTabs(); renderContent(); };
+    tabsEl.appendChild(btn);
+  });
+}
+
+async function loadTeacher(id){
+  if (store[id]) return store[id];
+  try{
+    const raw = localStorage.getItem(`attendance_${id}`);
+    store[id] = raw ? JSON.parse(raw) : { dates: {} };
+  }catch(e){
+    store[id] = { dates: {} };
+  }
+  return store[id];
+}
+
+async function saveTeacher(id){
+  try{
+    localStorage.setItem(`attendance_${id}`, JSON.stringify(store[id]));
+  }catch(e){
+    console.error('Local storage unavailable:', e);
+  }
+}
+
+function countPresent(teacherData){
+  return Object.values(teacherData.dates).filter(Boolean).length;
+}
+
+function buildPunchcard(total){
+  const inCycle = total === 0 ? 0 : (total % CLASSES_PER_MONTH === 0 ? CLASSES_PER_MONTH : total % CLASSES_PER_MONTH);
+  let html = '<div class="punchcard">';
+  for(let i = 1; i <= CLASSES_PER_MONTH; i++){
+    const filled = i <= inCycle;
+    html += `<div class="punch${filled ? ' filled' : ''}">${filled ? '✓' : i}</div>`;
+  }
+  html += '</div>';
+  return { html };
+}
+
+async function renderContent(){
+  contentEl.innerHTML = '<div class="loading">Loading ledger…</div>';
+  const data = await loadTeacher(activeTeacher);
+  const total = countPresent(data);
+  const { html: punchHtml } = buildPunchcard(total);
+  const completedCycles = Math.floor(total / CLASSES_PER_MONTH);
+  const remaining = total % CLASSES_PER_MONTH === 0 ? (total > 0 ? 0 : CLASSES_PER_MONTH) : CLASSES_PER_MONTH - (total % CLASSES_PER_MONTH);
+
+  const y = viewMonth.getFullYear();
+  const m = viewMonth.getMonth();
+  const firstDow = new Date(y, m, 1).getDay();
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+  const today = new Date();
+  const isCurMonth = today.getFullYear() === y && today.getMonth() === m;
+
+  let dowHtml = '<div class="dow-row">' + DOW_LABELS.map(d => `<div class="dow">${d}</div>`).join('') + '</div>';
+
+  let cells = '';
+  for(let i = 0; i < firstDow; i++){
+    cells += '<div class="day-cell empty"></div>';
+  }
+  for(let d = 1; d <= daysInMonth; d++){
+    const key = dateKey(y, m, d);
+    const present = !!data.dates[key];
+    const isToday = isCurMonth && today.getDate() === d;
+    cells += `<button type="button" class="day-cell${present ? ' present' : ''}${isToday ? ' today' : ''}" data-key="${key}" aria-pressed="${present}">
+      <span>${d}</span>${present ? '<span class="tick">✓</span>' : ''}
+    </button>`;
+  }
+
+  contentEl.innerHTML = `
+    <div class="punch-row-label">Current salary cycle (12 classes = 1 month)</div>
+    ${punchHtml}
+    <div class="stat-line"><b>${total}</b> total classes completed</div>
+    ${completedCycles > 0 ? `<div class="stat-line done">✓ ${completedCycles} month${completedCycles > 1 ? 's' : ''} of salary complete</div>` : ''}
+    <div class="stat-line"><b>${remaining}</b> more class${remaining === 1 ? '' : 'es'} until next month's salary is complete</div>
+    <hr class="divider">
+    <div class="cal-header">
+      <button type="button" id="prevMonth" aria-label="Previous month">‹</button>
+      <div class="cal-month-label">${MONTHS[m]} ${y}</div>
+      <button type="button" id="nextMonth" aria-label="Next month">›</button>
+    </div>
+    ${dowHtml}
+    <div class="day-grid">${cells}</div>
+  `;
+
+  document.getElementById('prevMonth').onclick = () => {
+    viewMonth.setMonth(viewMonth.getMonth() - 1);
+    renderContent();
+  };
+  document.getElementById('nextMonth').onclick = () => {
+    viewMonth.setMonth(viewMonth.getMonth() + 1);
+    renderContent();
+  };
+
+  contentEl.querySelectorAll('.day-cell[data-key]').forEach(cell => {
+    cell.addEventListener('click', async () => {
+      const key = cell.getAttribute('data-key');
+      const data = store[activeTeacher];
+      if(data.dates[key]) delete data.dates[key];
+      else data.dates[key] = true;
+      await saveTeacher(activeTeacher);
+      renderContent();
+    });
+  });
+}
+
+renderTabs();
+renderContent();
+</script>
+</body>
+</html>
